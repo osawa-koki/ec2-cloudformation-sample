@@ -35,3 +35,10 @@ Resources:
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-rtb
+  myRoute:
+    Type: AWS::EC2::Route
+    DependsOn: myVPCGatewayAttachment
+    Properties:
+      RouteTableId: !Ref myRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref myInternetGateway
