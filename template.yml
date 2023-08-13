@@ -1,6 +1,12 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Description: "📛📛📛 CloudFormationでEC2を作成するサンプルです！"
 
+Parameters:
+  SSHLocation:
+    Description: "SSH接続を許可するIPアドレス。"
+    Type: String
+    Default: 0.0.0.0/0
+
 Resources:
   myVPC:
     Type: AWS::EC2::VPC
@@ -47,3 +53,43 @@ Resources:
     Properties:
       SubnetId: !Ref mySubnet
       RouteTableId: !Ref myRouteTable
+  mySecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: !Sub ${AWS::StackName}-sg
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-sg
+  mySecurityGroupIngressSSH:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref mySecurityGroup
+      IpProtocol: tcp
+      FromPort: 22
+      ToPort: 22
+      CidrIp: !Ref SSHLocation
+  mySecurityGroupIngressHTTP:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref mySecurityGroup
+      IpProtocol: tcp
+      FromPort: 80
+      ToPort: 80
+      CidrIp: 0.0.0.0/0
+  mySecurityGroupIngressHTTPS:
+    Type: AWS::EC2::SecurityGroupIngress
+    Properties:
+      GroupId: !Ref mySecurityGroup
+      IpProtocol: tcp
+      FromPort: 443
+      ToPort: 443
+      CidrIp: 0.0.0.0/0
+  mySucurityGroupEgressAll:
+    Type: AWS::EC2::SecurityGroupEgress
+    Properties:
+      GroupId: !Ref mySecurityGroup
+      IpProtocol: '-1'
+      FromPort: -1
+      ToPort: -1
+      CidrIp: 0.0.0.0/0
