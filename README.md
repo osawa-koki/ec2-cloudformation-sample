@@ -54,6 +54,15 @@ aws cloudformation deploy \
     --template ./template.yml
 ```
 
+`Output`で指定した値を取得するには、以下のコマンドを実行します。  
+
+```shell
+aws cloudformation describe-stacks --stack-name <stack-name> --query <query> --output <output> --no-cli-pager
+
+# 例) バケット名を取得
+aws cloudformation describe-stacks --stack-name ec2-cloudformation-sample --query "Stacks[].Outputs[?OutputKey=='KeyPairId'].OutputValue" --output text --no-cli-pager
+```
+
 削除するには、以下のコマンドを実行します。  
 
 ```shell
