@@ -28,3 +28,10 @@ Resources:
     Properties:
       VpcId: !Ref myVPC
       InternetGatewayId: !Ref myInternetGateway
+  myRouteTable:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref myVPC
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-rtb
