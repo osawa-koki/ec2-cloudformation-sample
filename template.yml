@@ -1,0 +1,19 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "📛📛📛 CloudFormationでEC2を作成するサンプルです！"
+
+Resources:
+  myVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: 10.0.0.0/16
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-vpc
+  mySubnet:
+    Type: AWS::EC2::Subnet
+    Properties:
+      VpcId: !Ref myVPC
+      CidrBlock: 10.0.0.0/24
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-subnet
