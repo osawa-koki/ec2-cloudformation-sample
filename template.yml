@@ -6,7 +6,24 @@ Parameters:
     Description: "SSH接続を許可するIPアドレス。"
     Type: String
     Default: 0.0.0.0/0
-
+  SSHPublicKey:
+    Description: "SSH接続に使用する公開鍵。"
+    Type: String
+  InstanceType:
+    Description: "インスタンスタイプ。"
+    Type: String
+    Default: t2.micro
+    AllowedValues:
+      - t2.micro
+      - t2.small
+      - t2.medium
+      - t2.large
+      - t2.xlarge
+      - t2.2xlarge
+  ImageId:
+    Description: "AMIのID。"
+    Type: String
+    Default: ami-be4a24d9
 Resources:
   myVPC:
     Type: AWS::EC2::VPC
@@ -97,11 +114,30 @@ Resources:
     Type: AWS::EC2::KeyPair
     Properties:
       KeyName: !Sub ${AWS::StackName}-key
+      PublicKeyMaterial: !Ref SSHPublicKey
       Tags:
         - Key: Name
           Value: !Sub ${AWS::StackName}-key
+  myEc2Instance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref ImageId
+      InstanceType: !Ref InstanceType
+      KeyName: !Ref mySSHKey
+      NetworkInterfaces:
+        - AssociatePublicIpAddress: true
+          DeviceIndex: '0'
+          GroupSet:
+            - !Ref mySecurityGroup
+          SubnetId: !Ref mySubnet
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-ec2
 
 Outputs:
-  KeyPairId:
-    Description: "KeyPairのID。"
-    Value: !Ref mySSHKey
+  SSHPublicKey:
+    Description: "SSH接続に使用する公開鍵。"
+    Value: !Ref SSHPublicKey
+  EC2PublicIP:
+    Description: "EC2のパブリックIPアドレス。"
+    Value: !GetAtt myEc2Instance.PublicIp
