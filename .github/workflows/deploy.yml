@@ -27,3 +27,7 @@ jobs:
         no-fail-on-empty-changeset: "1"
         parameter-overrides: >-
           SSHPublicKey='${{ secrets.SSH_PUBLIC_KEY }}'
+    - name: Describe CloudFormation stack
+      run: aws cloudformation describe-stacks --stack-name ${{ secrets.STACK_NAME }} --no-cli-pager
+    - name: Cat Public IP
+      run: aws cloudformation describe-stacks --stack-name ${{ secrets.STACK_NAME }} --query "Stacks[].Outputs[?OutputKey=='EC2PublicIP'].OutputValue" --output text --no-cli-pager
