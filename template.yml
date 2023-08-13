@@ -93,3 +93,10 @@ Resources:
       FromPort: -1
       ToPort: -1
       CidrIp: 0.0.0.0/0
+  mySSHKey:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: !Sub ${AWS::StackName}-key
+      Tags:
+        - Key: Name
+          Value: !Sub ${AWS::StackName}-key
